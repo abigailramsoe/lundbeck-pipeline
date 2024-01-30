@@ -1,7 +1,6 @@
 ref: /maps/projects/lundbeck/data/hg38/genome.fa
 seed: 32
-suffix: "-hg38-dandySEED"
 a1: "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
 a2: "GGAAGAGCGTCGTGTAGGGAAAGAGTGT"
 units: units.tsv
-outfol: /maps/projects/lundbeck/scratch/sslib_devel/mapped
+outfol: /maps/projects/lundbeck/scratch/sslib_devel/mapped/
