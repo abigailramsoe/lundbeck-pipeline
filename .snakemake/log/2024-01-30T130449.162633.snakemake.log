@@ -161,3 +161,71 @@ localrule aln:
     resources: tmpdir=/tmp
 
 bwa aln -l 32 -t 12 /maps/projects/lundbeck/data/hg38/genome.fa /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP_S94_L001.pair1.truncated.gz > /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP_S94_L001.pair1.truncated.gz.sai
+[Tue Jan 30 13:06:34 2024]
+Finished job 49.
+1 of 153 steps (1%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Tue Jan 30 13:06:35 2024]
+localrule aln:
+    input: /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP_S94_L003.pair2.truncated.gz
+    output: /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP_S94_L003.pair2.truncated.gz.sai
+    jobid: 134
+    reason: Missing output files: /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP_S94_L003.pair2.truncated.gz.sai
+    wildcards: lib_lane=106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP_S94_L003, trim=pair2.truncated.gz
+    threads: 12
+    resources: tmpdir=/tmp
+
+bwa aln -l 32 -t 12 /maps/projects/lundbeck/data/hg38/genome.fa /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP_S94_L003.pair2.truncated.gz > /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP_S94_L003.pair2.truncated.gz.sai
+[Tue Jan 30 13:06:51 2024]
+Finished job 103.
+2 of 153 steps (1%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Tue Jan 30 13:06:52 2024]
+localrule aln:
+    input: /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-C7-cutsmart_S93_L004.pair2.truncated.gz
+    output: /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-C7-cutsmart_S93_L004.pair2.truncated.gz.sai
+    jobid: 110
+    reason: Missing output files: /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-C7-cutsmart_S93_L004.pair2.truncated.gz.sai
+    wildcards: lib_lane=106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-C7-cutsmart_S93_L004, trim=pair2.truncated.gz
+    threads: 12
+    resources: tmpdir=/tmp
+
+bwa aln -l 32 -t 12 /maps/projects/lundbeck/data/hg38/genome.fa /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-C7-cutsmart_S93_L004.pair2.truncated.gz > /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-C7-cutsmart_S93_L004.pair2.truncated.gz.sai
+[Tue Jan 30 13:06:55 2024]
+Finished job 151.
+3 of 153 steps (2%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Tue Jan 30 13:06:55 2024]
+localrule aln:
+    input: /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-B4-control-rSAP_S92_L001.pair2.truncated.gz
+    output: /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-B4-control-rSAP_S92_L001.pair2.truncated.gz.sai
+    jobid: 8
+    reason: Missing output files: /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-B4-control-rSAP_S92_L001.pair2.truncated.gz.sai
+    wildcards: lib_lane=106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-B4-control-rSAP_S92_L001, trim=pair2.truncated.gz
+    threads: 12
+    resources: tmpdir=/tmp
+
+bwa aln -l 32 -t 12 /maps/projects/lundbeck/data/hg38/genome.fa /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-B4-control-rSAP_S92_L001.pair2.truncated.gz > /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-B4-control-rSAP_S92_L001.pair2.truncated.gz.sai
+[Tue Jan 30 13:07:03 2024]
+Finished job 25.
+4 of 153 steps (3%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Tue Jan 30 13:07:04 2024]
+localrule aln:
+    input: /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-A2-control_S91_L002.pair1.truncated.gz
+    output: /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-A2-control_S91_L002.pair1.truncated.gz.sai
+    jobid: 55
+    reason: Missing output files: /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-A2-control_S91_L002.pair1.truncated.gz.sai
+    wildcards: lib_lane=106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-A2-control_S91_L002, trim=pair1.truncated.gz
+    threads: 12
+    resources: tmpdir=/tmp
+
+bwa aln -l 32 -t 12 /maps/projects/lundbeck/data/hg38/genome.fa /maps/projects/lundbeck/scratch/sslib_devel/mapped/trimmed/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-A2-control_S91_L002.pair1.truncated.gz > /maps/projects/lundbeck/scratch/sslib_devel/mapped/tmp/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-A2-control_S91_L002.pair1.truncated.gz.sai
