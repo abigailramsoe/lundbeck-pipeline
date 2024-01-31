@@ -7,7 +7,6 @@ import glob
 
 REF = config["ref"]
 seed = config["seed"]
-suffix = config["suffix"]
 a1 = config["a1"]
 a2 = config["a2"]
 units = config["units"]
@@ -20,14 +19,14 @@ out = config["outfol"]
 def make_rg_SE(wildcards):
     sm = unit_df.loc[(wildcards.lib_lane), "sm"]
     lb = unit_df.loc[(wildcards.lib_lane), "lb"]
-    id = unit_df.loc[(wildcards.lib_lane), "id"] + "-collapsed"
+    id = wildcards.lib_lane + "-collapsed"
     txt = "@RG\\tID:%s\\tSM:%s\\tCN:CGG\\tPL:ILLUMINA\\tLB:%s\\tDS:seqcenter@sund.ku.dk" % (id, sm, lb)
     return txt
 
 def make_rg_PE(wildcards):
     sm = unit_df.loc[(wildcards.lib_lane), "sm"]
     lb = unit_df.loc[(wildcards.lib_lane), "lb"]
-    id = unit_df.loc[(wildcards.lib_lane), "id"] + "-paired"
+    id = wildcards.lib_lane + "-paired"
     txt = "@RG\\tID:%s\\tSM:%s\\tCN:CGG\\tPL:ILLUMINA\\tLB:%s\\tDS:seqcenter@sund.ku.dk" % (id, sm, lb)
     return txt
 
@@ -47,7 +46,7 @@ TRIM_TYPE = ["collapsed.gz", "pair1.truncated.gz", "pair2.truncated.gz"]
 
 rule all:
     input:
-        expand(out + "bams/{lib}.md.bam", lib=list(set(unit_df["id"])))
+        expand(out + "bams/{lib}.md.bam.bai", lib=list(set(unit_df["id"])))
 
 
 
@@ -72,12 +71,12 @@ rule trim:
         c = out + "trimmed/{lib_lane}."+TRIM_TYPE[0],
         r1 = out + "trimmed/{lib_lane}."+TRIM_TYPE[1],
         r2 = out + "trimmed/{lib_lane}."+TRIM_TYPE[2],
-        s = out + "trimmed/{lib_lane}.settings",
+        s = out + "stats/{lib_lane}.settings",
     params:
         out = out + "trimmed/{lib_lane}"
     threads: 6
     shell:
-        "AdapterRemoval --threads {threads} --file1 {input[0]} --file2 {input[1]} --minlength 30 --adapter1 {a1} --adapter2 {a2} --collapse-conservatively --basename {params.out} --gzip "
+        "mkdir -p $(dirname {output.s}); AdapterRemoval --threads {threads} --settings {output.s} --file1 {input[0]} --file2 {input[1]} --minlength 30 --adapter1 {a1} --adapter2 {a2} --collapse-conservatively --basename {params.out} --gzip "
 
 
 rule aln:
@@ -118,7 +117,7 @@ rule sam2bam:
     input:
         out + "tmp/{lib_lane}.{sepe}.sam"
     output:
-        temp(out + "tmp/{lib_lane}.{sepe}.bam")
+        out + "bams/{lib_lane}.{sepe}.bam"
     threads: 6
 
     shell:
@@ -126,7 +125,7 @@ rule sam2bam:
 
 rule mapped:
     input:
-        out + "tmp/{lib_lane}.{sepe}.bam"
+        out + "bams/{lib_lane}.{sepe}.bam"
     output:
         temp(out + "tmp/{lib_lane}.{sepe}.mapped.bam")
     threads: 6
@@ -151,8 +150,17 @@ rule md:
     output:
         out + "bams/{lib}.md.bam"
     params:
-        metrics = out + "bams/{lib}.metrics",
+        metrics = out + "stats/{lib}.metrics",
         tmpdir = out + "bams/"
     threads: 6
     shell:
-         "java -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads={threads} -Xmx2g -jar /maps/projects/lundbeck/apps/picard/build/libs/picard.jar MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=12000 I={input} o={output} REMOVE_DUPLICATES=false METRICS_FILE={params.metrics} TAGGING_POLICY=All VALIDATION_STRINGENCY=LENIENT"
+         "mkdir -p $(dirname {params.metrics}); java -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads={threads} -Xmx2g -jar /maps/projects/lundbeck/apps/picard/build/libs/picard.jar MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=12000 I={input} o={output} REMOVE_DUPLICATES=false METRICS_FILE={params.metrics} TAGGING_POLICY=All VALIDATION_STRINGENCY=LENIENT"
+
+rule idx:
+    input:
+        out + "bams/{lib}.md.bam"
+    output:
+        out + "bams/{lib}.md.bam.bai"
+    threads: 6
+    shell:
+         "samtools index {input} -@{threads}"
