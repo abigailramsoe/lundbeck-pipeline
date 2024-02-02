@@ -44,5 +44,5 @@ mt=$(samtools depth $bam_file -a -Q 30 -q 20 -r $mt_region -@$threads|datamash m
 x=$(samtools depth $bam_file -a -Q 30 -q 20 -r $x_region -@$threads|datamash mean 3)
 y=$(samtools depth $bam_file -a -Q 30 -q 20 -r $y_region -@$threads|datamash mean 3)
 
-echo -e "Input\tAutosomalCov\tMTCov\tXCov\tYCov"
-echo -e "$bam_file\t$auto\t$mt\t$x\t$y"
+echo -e "Input\tAutosomalCov\tMTCov\tXCov\tYCov" > $output_base
+echo -e "$bam_file\t$auto\t$mt\t$x\t$y" >> $output_base

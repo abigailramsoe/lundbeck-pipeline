@@ -15,7 +15,6 @@ dir = config["outfol"]
 CHROMS = range(1, 23)
 
 unit_df = pd.read_table(config["units"]).set_index(["sampleId"])
-print(unit_df)
 all_bams = unit_df["path"]
 #unit_df["CGG"] = [x.split("/")[4] for x in unit_df["Cram"]]
 #unit_df["basename"] = [x.split("/")[-1].split(".")[0] for x in unit_df["Cram"]]
@@ -23,7 +22,6 @@ all_bams = unit_df["path"]
 #CGGs = ["CGG" + x.split("_")[0][0:6] for x in unit_df["basename"].tolist()]
 #RUN = unit_df["Run"].tolist()[0]
 #unit_df = unit_df.set_index(["basename"])
-print('|'.join(all_bams))
 def get_extension(lib_name):
     if lib_name.endswith('.cram'):
         return 'crai'
@@ -54,7 +52,10 @@ rule all:
         #expand(dir + "results/{cgg}/depth/{lib}.depth", zip, lib = SAMPLES, cgg = CGGs),
         #expand(dir + "results/{cgg}/superduper/{lib}.dupstat.txt", zip, lib = SAMPLES, cgg = CGGs),
         #expand(dir + "results/{cgg}/superduper/{lib}.table.txt", zip, lib = SAMPLES, cgg = CGGs),
-        expand(dir + "results/haplo/{id}.haplo", id = unit_df.index),
+        expand(dir + "haplo/{id}.haplo", id = unit_df.index),
+        expand(dir + "depth/{id}.depth", id = unit_df.index),
+        expand(dir + "sex/{id}.sex", id = unit_df.index),
+
         #expand(dir + "results/{cgg}/sex/{lib}.sex", zip, lib = SAMPLES, cgg = CGGs),
         #expand(dir + "results/{cgg}/contX/{lib}.res", zip, lib = SAMPLES, cgg = CGGs),
         #expand(dir + "results/{cgg}/metadamage/{lib}.prof", zip, lib = SAMPLES, cgg = CGGs),
@@ -87,50 +88,29 @@ rule haplo:
     input:
         get_bam
     output:
-        dir + "results/haplo/{id}.haplo"
-    params:
-        basename = dir + "results/haplo/{id}",
+        dir + "haplo/{id}.haplo"
     threads: 1
     shell:
-        "bash analyses/haplogrep.sh -b {input} -f {REF} -o {params.basename}"
-
-
-rule complex:
-    input:
-        cram = dir + "{cgg}/{lib}.cram",
-        idx = dir + "{cgg}/{lib}.cram.crai",
-        totreads = dir + "stats-per-run/hi/totreads.txt",
-        dupstat = dir + "results/{cgg}/superduper/{lib}.dupstat.txt",
-        table = dir + "results/{cgg}/superduper/{lib}.table.txt",
-    output:
-        dir + "results/{cgg}/complex/{lib}_DEPTH-{depth}.complexity.out"
-    params:
-        dir + "results/{cgg}/complex/"
-    threads: 1
-    shell:
-        "mkdir -p $(dirname {output}); bash /projects/lundbeck/apps/scripts/complex.sh {input.cram} {input.totreads} {input.table} {input.dupstat} {params} {wildcards.depth}"
-
-
+        "bash analyses/haplogrep.sh -b {input} -f {REF} -o {output}"
 
 rule depth:
     input:
         get_bam
     output:
-        dir + "results/{cgg}/depth/{lib}.depth"
+        dir + "depth/{id}.depth"
     threads: 4
     shell:
-        "mkdir -p $(dirname {output}); bash /projects/lundbeck/apps/scripts/depth.sh {input.cram} {PIPE} {threads} > {output}"
+        "bash analyses/depth.sh -b {input} -t {threads} -o {output}"
 
 
 rule sex:
     input:
-        cram = dir + "{cgg}/{lib}.cram",
-        idx = dir + "{cgg}/{lib}.cram.crai",
+        get_bam
     output:
-        dir + "results/{cgg}/sex/{lib}.sex"
-    threads: 1
+        dir + "sex/{id}.sex"
+    threads: 4
     shell:
-        "mkdir -p $(dirname {output}); bash /projects/lundbeck/apps/scripts/sex.sh {input.cram} new > {output}"
+        "bash analyses/sex.sh -b {input} -f {REF} -o {output}"
 
 
 rule angsdX:
