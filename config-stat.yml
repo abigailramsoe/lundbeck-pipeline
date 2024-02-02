@@ -1,0 +1,4 @@
+ref: /maps/projects/lundbeck/data/hg38/genome.fa
+seed: 32
+units: sslib_devel_units
+outfol: /projects/lundbeck/scratch/sslib_devel/results/
