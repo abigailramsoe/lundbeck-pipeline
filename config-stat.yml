@@ -4,3 +4,4 @@ units: sslib_devel_units
 outfol: /projects/lundbeck/scratch/sslib_devel/results/
 angsd_dir: /projects/lundbeck/apps/angsd/ #https://github.com/ANGSD/angsd
 bam2prof_exec: /projects/lundbeck/apps/bam2prof/src/bam2prof #https://github.com/grenaud/bam2prof
+superduper_exec: /projects/lundbeck/apps/decluster/decluster #https://github.com/ANGSD/decluster

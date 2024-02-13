@@ -9,6 +9,7 @@ units = config["units"]
 dir = config["outfol"]
 angsd = config["angsd_dir"]
 bam2prof = config["bam2prof_exec"]
+superduper = config["superduper_exec"]
 
 ## --------------------------------------------------------------------------------
 ## helpers
@@ -37,8 +38,7 @@ wildcard_constraints:
 
 rule all:
     input:
-        #expand(dir + "results/{cgg}/superduper/{lib}.dupstat.txt", zip, lib = SAMPLES, cgg = CGGs),
-        #expand(dir + "results/{cgg}/superduper/{lib}.table.txt", zip, lib = SAMPLES, cgg = CGGs),
+        expand(dir + "superduper/{id}.dupstat.txt", id = unit_df.index),
         expand(dir + "haplo/{id}.haplo", id = unit_df.index),
         expand(dir + "depth/{id}.depth", id = unit_df.index),
         expand(dir + "sex/{id}.sex", id = unit_df.index),
@@ -132,13 +132,11 @@ rule contamix:
 
 rule superduper:
     input:
-        cram = dir + "{cgg}/{lib}.cram",
-        idx = dir + "{cgg}/{lib}.cram.crai"
+        get_bam
     output:
-        dupstat = dir + "results/{cgg}/superduper/{lib}.dupstat.txt",
-        table = dir + "results/{cgg}/superduper/{lib}.table.txt"
+        dir + "superduper/{id}.dupstat.txt",
     params:
-        dir + "results/{cgg}/superduper/{lib}"
+        dir + "superduper/{id}",
     threads: 4
     shell:
-        "mkdir -p $(dirname {output.table}); bash /projects/lundbeck/apps/scripts/superduper.sh {input.cram} {PIPE} {params} {threads}; touch {output.dupstat}; touch {output.table}"
+        "bash analyses/superduper.sh -b {input} -o {params} -t {threads} -e {superduper} -f {REF}"

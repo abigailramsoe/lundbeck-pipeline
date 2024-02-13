@@ -7,7 +7,7 @@ bam2prof=""
 length=""
 # Function to display usage
 usage() {
-  echo "Usage: $0 -b <bam_file> -e <bam2prof executable> -o <output_base> -l <length>"
+  echo "Usage: $0 -b <bam_file> -e <bam2prof executable> -o <output_base> -l <length (30)>"
     exit 1
 }
 

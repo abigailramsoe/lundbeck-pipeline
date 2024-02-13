@@ -7,7 +7,7 @@ threads=""
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 -b <bam_file> -o <output_base> -t <threads>"
+    echo "Usage: $0 -b <bam_file> -o <output_base> -t threads (1)>"
     exit 1
 }
 

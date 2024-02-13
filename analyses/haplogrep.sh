@@ -25,7 +25,7 @@ done
 
 # Check if all parameters are provided
 if [[ -z $bam_file || -z $fasta_file || -z $output_file ]]; then
-    echo "Error: Bam, fasta and output are required (-b,-f,-po)"
+    echo "Error: Bam, fasta and output are required (-b,-f,-o)"
     usage
 fi
 
@@ -41,4 +41,4 @@ bash helpers/index.sh $bam_file
 bcftools mpileup $bam_file --ignore-RG -Ou --fasta-ref $fasta_file -r $region | bcftools call -m - -Oz -o $vcf
 bcftools index $vcf
 java -jar helpers/haplogrep-2.1.25.jar --format vcf --in $vcf --out $output_file
-rm $vcf 
+rm $vcf

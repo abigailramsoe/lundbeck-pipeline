@@ -4,26 +4,28 @@ set -e
 bam_file=""
 fasta_file=""
 output_file=""
+qscore=""
 
 # Function to display usage
 usage() {
-    echo "Usage: $0 -b <bam_file> -f <fasta_file> -o <output_base>"
+    echo "Usage: $0 -b <bam_file> -f <fasta_file> -o <output_base> -q <quality score (30)>"
     exit 1
 }
 
 # Parse command-line options
-while getopts 'b:f:r:o:' flag; do
+while getopts 'b:f:r:o:q:' flag; do
     case "${flag}" in
         b) bam_file="${OPTARG}" ;;
         f) fasta_file="${OPTARG}" ;;
         o) output_file="${OPTARG}" ;;
+        q) qscore="${OPTARG}" ;;
         *) usage ;;
     esac
 done
 
 # Check if all parameters are provided
 if [[ -z $bam_file || -z $fasta_file || -z $output_file ]]; then
-    echo "Error: All parameters are required."
+    echo "Error: Bam, fasta and output are required (-b,-f,-o)"
     usage
 fi
 
