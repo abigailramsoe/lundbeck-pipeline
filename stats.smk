@@ -44,9 +44,7 @@ rule all:
         expand(dir + "sex/{id}.sex", id = unit_df.index),
         expand(dir + "angsdX/{id}.res", id = unit_df.index),
         expand(dir + "damage/{id}.prof", id = unit_df.index),
-
-        #expand(dir + "results/{cgg}/metadamage/{lib}.prof", zip, lib = SAMPLES, cgg = CGGs),
-        #expand(expand(dir + "results/{{cgg}}/contMT_{cov}xdif{dif}/{{lib}}_mt.summary.txt", zip, cov = [1, 5], dif = [5, 7]), zip, lib = SAMPLES, cgg = CGGs), # fix this s
+        expand(expand(dir + "contamix/{{id}}_{cov}x_dif{dif}.mt.summary.txt", zip, cov = [1, 5], dif = [0.5, 0.7]), zip, id = unit_df.index),
 
 
 onsuccess:
@@ -124,13 +122,12 @@ rule contamix:
     input:
         get_bam
     output:
-        #dir + "damage/{id}.prof"
-        dir + "results/{cgg}/contMT_{cov}xdif{dif}/{lib}_mt.summary.txt"
+        dir + "contamix/{id}_{cov}x_dif{dif}.mt.summary.txt"
     params:
-        dir + "results/{cgg}/contMT_{cov}xdif{dif}/"
-    threads: 3
+        dir + "contamix/{id}_{cov}x_dif{dif}"
+    threads: 1
     shell:
-        "mkdir -p $(dirname {output}); bash /projects/lundbeck/apps/scripts/contamix.sh {input.cram} {wildcards.cov} {wildcards.dif} {params} {PIPE}"
+        "bash analyses/contamix.sh -b {input} -f {REF} -o {params} -c {wildcards.cov} -d {wildcards.dif}"
 
 
 rule superduper:

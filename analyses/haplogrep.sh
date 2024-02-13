@@ -12,16 +12,6 @@ usage() {
     exit 1
 }
 
-
-check_region() {
-    if [[ $1 != "chrM" ]] && [[ $1 != "MT" ]]; then
-        echo "Could not find what the MT reference is called automatically"
-        echo "Please supply the region name with -r"
-        exit 1
-    fi
-}
-
-
 # Parse command-line options
 while getopts 'b:f:r:o:' flag; do
     case "${flag}" in
@@ -35,7 +25,7 @@ done
 
 # Check if all parameters are provided
 if [[ -z $bam_file || -z $fasta_file || -z $output_file ]]; then
-    echo "Error: Bam, fasta and output are required (-b,-f,-o)"
+    echo "Error: Bam, fasta and output are required (-b,-f,-po)"
     usage
 fi
 
@@ -44,17 +34,11 @@ bash helpers/check_file.sh "$bam_file"
 bash helpers/check_file.sh "$fasta_file"
 bash helpers/check_directory.sh $(dirname "$output_file")
 
-if [ -z "$region" ]
-then
-  region=$(grep ">" $fasta_file|grep M|head -n1|cut -c2-)
-  check_region $region
-else
-  echo "Using user defined region $region"
-fi
-
+region=$(bash helpers/find_mt.sh "$fasta_file")
 
 vcf=$output_file.vcf.gz
 bash helpers/index.sh $bam_file
 bcftools mpileup $bam_file --ignore-RG -Ou --fasta-ref $fasta_file -r $region | bcftools call -m - -Oz -o $vcf
 bcftools index $vcf
 java -jar helpers/haplogrep-2.1.25.jar --format vcf --in $vcf --out $output_file
+rm $vcf 
