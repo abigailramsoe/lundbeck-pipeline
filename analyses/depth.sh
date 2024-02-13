@@ -16,7 +16,7 @@ while getopts 'b:f:o:t:' flag; do
     case "${flag}" in
         b) bam_file="${OPTARG}" ;;
         o) output_base="${OPTARG}" ;;
-        t) region="${OPTARG}" ;;
+        t) threads="${OPTARG}" ;;
         *) usage ;;
     esac
 done

@@ -2,4 +2,5 @@ ref: /maps/projects/lundbeck/data/hg38/genome.fa
 seed: 32
 units: sslib_devel_units
 outfol: /projects/lundbeck/scratch/sslib_devel/results/
-angsd_dir: /projects/lundbeck/apps/angsd/
+angsd_dir: /projects/lundbeck/apps/angsd/ #https://github.com/ANGSD/angsd
+bam2prof_exec: /projects/lundbeck/apps/bam2prof/src/bam2prof #https://github.com/grenaud/bam2prof

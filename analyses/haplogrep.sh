@@ -35,7 +35,7 @@ done
 
 # Check if all parameters are provided
 if [[ -z $bam_file || -z $fasta_file || -z $output_file ]]; then
-    echo "Error: All parameters are required."
+    echo "Error: Bam, fasta and output are required (-b,-f,-o)"
     usage
 fi
 

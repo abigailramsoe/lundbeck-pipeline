@@ -8,6 +8,7 @@ REF = config["ref"]
 units = config["units"]
 dir = config["outfol"]
 angsd = config["angsd_dir"]
+bam2prof = config["bam2prof_exec"]
 
 ## --------------------------------------------------------------------------------
 ## helpers
@@ -42,8 +43,8 @@ rule all:
         expand(dir + "depth/{id}.depth", id = unit_df.index),
         expand(dir + "sex/{id}.sex", id = unit_df.index),
         expand(dir + "angsdX/{id}.res", id = unit_df.index),
+        expand(dir + "damage/{id}.prof", id = unit_df.index),
 
-        #expand(dir + "results/{cgg}/contX/{lib}.res", zip, lib = SAMPLES, cgg = CGGs),
         #expand(dir + "results/{cgg}/metadamage/{lib}.prof", zip, lib = SAMPLES, cgg = CGGs),
         #expand(expand(dir + "results/{{cgg}}/contMT_{cov}xdif{dif}/{{lib}}_mt.summary.txt", zip, cov = [1, 5], dif = [5, 7]), zip, lib = SAMPLES, cgg = CGGs), # fix this s
 
@@ -105,26 +106,25 @@ rule angsdX:
         dir + "angsdX/{id}.res"
     threads: 1
     shell:
-        "bash analyses/angsdX.sh -b {input} -a {angsd} -f {REF} -o {output}"
+        "bash analyses/angsdX.sh -b {input} -e {angsd} -f {REF} -o {output}"
 
 
 rule dmg:
     input:
-        cram = dir + "{cgg}/{lib}.cram",
-        idx = dir + "{cgg}/{lib}.cram.crai"
+        get_bam
     output:
-        dir + "results/{cgg}/metadamage/{lib}.prof"
+        dir + "damage/{id}.prof"
     threads: 1
     shell:
-        "mkdir -p $(dirname {output}); bash /projects/lundbeck/apps/scripts/dmg.sh {input.cram} {output}"
+        "bash analyses/damage.sh -b {input} -e {bam2prof} -o {output}"
 
 
 
 rule contamix:
     input:
-        cram = dir + "{cgg}/{lib}.cram",
-        idx = dir + "{cgg}/{lib}.cram.crai"
+        get_bam
     output:
+        #dir + "damage/{id}.prof"
         dir + "results/{cgg}/contMT_{cov}xdif{dif}/{lib}_mt.summary.txt"
     params:
         dir + "results/{cgg}/contMT_{cov}xdif{dif}/"

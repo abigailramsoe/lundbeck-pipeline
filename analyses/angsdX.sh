@@ -8,15 +8,15 @@ angsd_dir=""
 
 # Function to display usage
 usage() {
-  echo "Usage: $0 -b <bam_file> -f <fasta_file> -o <output_base> -a <path to angsd directory>"
+  echo "Usage: $0 -b <bam_file> -f <fasta_file> -o <output_base> -e <path to angsd directory>"
     exit 1
 }
 
 # Parse command-line options
-while getopts 'b:f:o:a:' flag; do
+while getopts 'b:f:o:e:' flag; do
     case "${flag}" in
         b) bam_file="${OPTARG}" ;;
-        a) angsd_dir="${OPTARG}" ;;
+        e) angsd_dir="${OPTARG}" ;;
         f) fasta_file="${OPTARG}" ;;
         o) output_base="${OPTARG}" ;;
         *) usage ;;
