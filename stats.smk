@@ -10,14 +10,21 @@ dir = config["outfol"]
 angsd = config["angsd_dir"]
 bam2prof = config["bam2prof_exec"]
 superduper = config["superduper_exec"]
+lib_complexity = config["lib_complexity"]
 
 ## --------------------------------------------------------------------------------
 ## helpers
 
-CHROMS = range(1, 23)
-
 unit_df = pd.read_table(config["units"]).set_index(["sampleId"])
-all_bams = unit_df["path"]
+
+if lib_complexity:
+    import os
+    dirs = [os.path.dirname(x) for x in list(unit_df["path"])]
+    if len(set(dirs)) != 1: ar_dir_error()
+    ar_dir = dirs[0]
+    if not os.path.isdir(ar_dir): ar_dir_error()
+    ar_settings_dir = "/".join(ar_dir.split("/")[0:-1]) + "/stats/"
+
 
 ## --------------------------------------------------------------------------------
 ## functions
@@ -25,47 +32,77 @@ all_bams = unit_df["path"]
 def get_bam(wildcards):
     return unit_df.loc[(wildcards.id), "path"]
 
+def ar_dir_error():
+    print("Could not find AdapterRemoval settings directory automatically from units")
+    print("Give up on getting library projections (library_complexity: no)")
+    exit(1)
 
-## --------------------------------------------------------------------------------
-## constraints
 
-wildcard_constraints:
-    full = '|'.join(all_bams),
-    #lib = '|'.join(SAMPLES),
 
 ## --------------------------------------------------------------------------------
 ## targets
 
+simple_res = expand(dir + "superduper/{id}.dupstat.txt", id = unit_df.index) + \
+            expand(dir + "haplo/{id}.haplo", id = unit_df.index) + \
+            expand(dir + "depth/{id}.depth", id = unit_df.index) + \
+            expand(dir + "sex/{id}.sex", id = unit_df.index) + \
+            expand(dir + "angsdX/{id}.res", id = unit_df.index) + \
+            expand(dir + "damage/{id}.prof", id = unit_df.index) + \
+            expand(expand(dir + "contamix/{{id}}_{cov}x_dif{dif}.mt.summary.txt", zip, cov = [1, 5], dif = [0.5, 0.7]), zip, id = unit_df.index)
+
+complexity_res = expand(expand(dir + "complexity/{{id}}_DEPTH-{depth}.complexity.out", depth = [0.1,0.5,0.7,1,2,4,8,12]), zip, id = unit_df.index)
+
+all_res = simple_res
+if lib_complexity:
+    all_res += complexity_res
+
 rule all:
     input:
-        expand(dir + "superduper/{id}.dupstat.txt", id = unit_df.index),
-        expand(dir + "haplo/{id}.haplo", id = unit_df.index),
-        expand(dir + "depth/{id}.depth", id = unit_df.index),
-        expand(dir + "sex/{id}.sex", id = unit_df.index),
-        expand(dir + "angsdX/{id}.res", id = unit_df.index),
-        expand(dir + "damage/{id}.prof", id = unit_df.index),
-        expand(expand(dir + "contamix/{{id}}_{cov}x_dif{dif}.mt.summary.txt", zip, cov = [1, 5], dif = [0.5, 0.7]), zip, id = unit_df.index),
-
+        expand(dir + "results.csv"),
 
 onsuccess:
     print("Workflow finished, no error")
-    #tt, sdate = config["index"].split("/")[-1].split(".")[0].split("-")
-    #csv_name = "%s-%s.csv" % (sdate, tt)
-    #shellmsg = 'bash scripts/csv_wrapper.sh '+config["index"]+' '+config["pipe"] + '> '+dir+'/stats-per-run/csv/'+ csv_name
-    #shell(shellmsg)
-    #shellmsg = 'mail -s "%s stats FINISHED" abigail@palaeome.org < {log}' % RUN
-    #shell(shellmsg)
-
-
 
 onerror:
     print("An error occurred")
-    #shellmsg = 'mail -s "%s stats ERROR" abigail@palaeome.org < {log}' % RUN
-    #shell(shellmsg)
+
 ## --------------------------------------------------------------------------------
 ## rules
 
+rule concat_ar:
+    input:
+        ar_settings_dir
+    output:
+        dir + "complexity/ar.full.txt",
+        dir + "complexity/totreads.txt",
+        dir + "complexity/discm1.txt",
+    params:
+        dir + "complexity/"
+    shell:
+        "bash helpers/parse_AR.sh {input} {params}"
 
+rule results:
+    input:
+        all_res
+    output:
+        dir + "results.csv",
+    threads: 1
+    shell:
+        "bash helpers/csv_wrapper.sh {units} {dir} > {output}"
+
+rule complex:
+    input:
+        bam = get_bam,
+        totreads = dir + "complexity/totreads.txt",
+        dupstat = dir + "superduper/{id}.dupstat.txt",
+        table = dir + "superduper/{id}.table.txt",
+    output:
+        dir + "complexity/{id}_DEPTH-{depth}.complexity.out"
+    params:
+        dir + "complexity/{id}"
+    threads: 1
+    shell:
+        "bash analyses/complex.sh -b {input.bam} -t {input.totreads} -a {input.table} -u {input.dupstat} -o {params} -d {wildcards.depth}"
 
 
 rule haplo:
@@ -117,7 +154,6 @@ rule dmg:
         "bash analyses/damage.sh -b {input} -e {bam2prof} -o {output}"
 
 
-
 rule contamix:
     input:
         get_bam
@@ -134,7 +170,7 @@ rule superduper:
     input:
         get_bam
     output:
-        dir + "superduper/{id}.dupstat.txt",
+        dir + "superduper/{id}.dupstat.txt"
     params:
         dir + "superduper/{id}",
     threads: 4
