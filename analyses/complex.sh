@@ -10,14 +10,13 @@ depth=""
 
 # Function to display usage
 usage() {
-  echo "Usage: $0 -b <bam_file> -t <totreads_file> -a <superduper table file> -u <superduper dupstat file> -o <output_base> -d <depth>"
+  echo "Usage: $0 -t <totreads_file> -a <superduper table file> -u <superduper dupstat file> -o <output_base> -d <depth>"
     exit 1
 }
 
 # Parse command-line options
-while getopts 'b:t:a:u:o:d:' flag; do
+while getopts 't:a:u:o:d:' flag; do
     case "${flag}" in
-        b) bam_file="${OPTARG}" ;;
         t) totreads_file="${OPTARG}" ;;
         a) table="${OPTARG}" ;;
         u) dup="${OPTARG}" ;;
@@ -28,15 +27,14 @@ while getopts 'b:t:a:u:o:d:' flag; do
 done
 
 # Check if all parameters are provided
-if [[ -z $bam_file || -z $totreads_file || -z $table || -z $dup || -z $output_base || -z $depth ]]; then
+if [[ -z $totreads_file || -z $table || -z $dup || -z $output_base || -z $depth ]]; then
     echo "Error: All parameters are required."
     usage
 fi
 
 # Validate files and directories
-bash helpers/check_file.sh "$bam_file"
 bash helpers/check_file.sh "$totreads_file"
-bash helpers/check_file.sh "$table" # might need to make this less strict, sometimes there is no table 
+bash helpers/check_file.sh "$table" # might need to make this less strict, sometimes there is no table
 bash helpers/check_file.sh "$dup"
 
 bash helpers/check_directory.sh $(dirname $output_base)
@@ -54,12 +52,11 @@ cld=$(cat $dup|grep CLD|cut -f2)
 ncd=$(($rpf-$cld))
 read_len=$(cat $dup|grep CMA|cut -f2)
 
-bambase=$(basename $bam_file|cut -f1 -d.)
-totreads=$(cat $totreads_file | grep $bambase | cut -f2)
+id=$(basename $output_base)
+totreads=$(cat $totreads_file|awk -v i=$id '{ if ($1==i) print($2) }')
 
 
 out=$output_base"_DEPTH-${depth}.complexity.out"
-
 if [ ! -s $table ]; then
  echo -e "$totreads $ncd NaN NaN" > $out
 else

@@ -24,8 +24,7 @@ if(any(is.na(a[,2]))){
 
     ## y is the number of reads we require given the 'length of genome' and length of each read
         y<-DoC*genomesize/MeanLength
-
-    ##duplication level
+      ##duplication level
         duplevel <- 1-a[,2]/a[,1]
 
     ##below is the index that tells us the closest number of reads that matches our coveragte

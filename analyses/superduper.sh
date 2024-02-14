@@ -47,3 +47,4 @@ if [ -z "$pixeldist" ]; then pixeldist=12000; fi
 if [ -z "$qscore" ]; then qscore=30; fi
 
 $superduper -w -b ${bam_file} -T $fasta_file -q $qscore -o $output_base -p $pixeldist -@$threads -m
+touch $output_base.table.txt 

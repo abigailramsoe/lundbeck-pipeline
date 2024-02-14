@@ -17,6 +17,7 @@ lib_complexity = config["lib_complexity"]
 
 unit_df = pd.read_table(config["units"]).set_index(["sampleId"])
 
+ar_settings_dir = ""
 if lib_complexity:
     import os
     dirs = [os.path.dirname(x) for x in list(unit_df["path"])]
@@ -24,6 +25,7 @@ if lib_complexity:
     ar_dir = dirs[0]
     if not os.path.isdir(ar_dir): ar_dir_error()
     ar_settings_dir = "/".join(ar_dir.split("/")[0:-1]) + "/stats/"
+    print("Doing library complexity analysis")
 
 
 ## --------------------------------------------------------------------------------
@@ -50,7 +52,7 @@ simple_res = expand(dir + "superduper/{id}.dupstat.txt", id = unit_df.index) + \
             expand(dir + "damage/{id}.prof", id = unit_df.index) + \
             expand(expand(dir + "contamix/{{id}}_{cov}x_dif{dif}.mt.summary.txt", zip, cov = [1, 5], dif = [0.5, 0.7]), zip, id = unit_df.index)
 
-complexity_res = expand(expand(dir + "complexity/{{id}}_DEPTH-{depth}.complexity.out", depth = [0.1,0.5,0.7,1,2,4,8,12]), zip, id = unit_df.index)
+complexity_res = [dir + "complexity/ar.full.txt"] + expand(expand(dir + "complexity/{{id}}_DEPTH-{depth}.complexity.out", depth = [0.1,0.5,0.7,1,2,4,8,12]), zip, id = unit_df.index)
 
 all_res = simple_res
 if lib_complexity:
@@ -58,6 +60,7 @@ if lib_complexity:
 
 rule all:
     input:
+        all_res,
         expand(dir + "results.csv"),
 
 onsuccess:
@@ -79,7 +82,7 @@ rule concat_ar:
     params:
         dir + "complexity/"
     shell:
-        "bash helpers/parse_AR.sh {input} {params}"
+        "bash helpers/parse_AR.sh {input} {params} {units}"
 
 rule results:
     input:
@@ -88,11 +91,10 @@ rule results:
         dir + "results.csv",
     threads: 1
     shell:
-        "bash helpers/csv_wrapper.sh {units} {dir} > {output}"
+        "bash helpers/csv_wrapper.sh {units} {dir} {lib_complexity} > {output}"
 
 rule complex:
     input:
-        bam = get_bam,
         totreads = dir + "complexity/totreads.txt",
         dupstat = dir + "superduper/{id}.dupstat.txt",
         table = dir + "superduper/{id}.table.txt",
@@ -102,7 +104,7 @@ rule complex:
         dir + "complexity/{id}"
     threads: 1
     shell:
-        "bash analyses/complex.sh -b {input.bam} -t {input.totreads} -a {input.table} -u {input.dupstat} -o {params} -d {wildcards.depth}"
+        "bash analyses/complex.sh -t {input.totreads} -a {input.table} -u {input.dupstat} -o {params} -d {wildcards.depth}"
 
 
 rule haplo:
@@ -170,7 +172,8 @@ rule superduper:
     input:
         get_bam
     output:
-        dir + "superduper/{id}.dupstat.txt"
+        dir + "superduper/{id}.dupstat.txt",
+        dir + "superduper/{id}.table.txt",
     params:
         dir + "superduper/{id}",
     threads: 4

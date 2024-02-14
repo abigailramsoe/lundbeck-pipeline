@@ -1,6 +1,8 @@
 set -e
 units=$1
 results_fol=$2
+complexity=$3
+
 
 # Headers
 echo -n ID,Path,
@@ -13,6 +15,22 @@ echo -n mtHaplo_Assignment,mtHaplo_Probability,
 echo -n "ContamixApprox-1Xdif05_MAPauthentic,ContamixApprox-1Xdif05_LowerBound,ContamixApprox-1Xdif05_UpperBound,"
 echo -n "ContamixPrecise-5Xdif07_MAPauthentic,ContamixPrecise-5Xdif07_LowerBound,ContamixPrecise-5Xdif07_UpperBound,"
 echo -n ANGSD-XContamination_Method1,ANGSD-XContamination_Method2,ANGSD-XContamination_nSNPsites,ANGSD-XContamination_withFlanking
+
+if [ "$complexity" != "False" ]; then
+  echo -n ,Reads_Total,
+  echo -n Reads_AfterTrim,
+  echo -n AfterTrim,
+  echo -n Mapping,
+  echo -n Clonality,
+  echo -n ClusterDups,
+  echo -n Endogenous,
+  echo -n EndogenousUnique,
+  echo -n Efficiency,
+  for depth in 0.1 0.5 0.7 1 2 4 8 12; do
+      echo -n ReadsToReach_${depth}x,
+      echo -n ClonalityAt_${depth}x,
+  done
+fi
 echo ""
 
 # Now loop through each bam in pool
@@ -81,6 +99,31 @@ do
   nsnp=$(cat $angsdres | grep nSNP | cut -f1 -d, | cut -f7 -d" ")
   flanking=$(cat $angsdres | grep nSNP | cut -f2 -d, | cut -f4 -d" ")
   echo -n $method1,$method2,$nsnp,$flanking
+
+  if [ "$complexity" != "False" ]; then
+    totread=`cat $results_fol/complexity/totreads.txt|awk -v i=$id '{ if ($1==i) print($2) }'`
+    discm1=`cat $results_fol/complexity/discm1.txt|awk -v i=$id '{ if ($1==i) print($2) }'`
+    trim=$((${totread}-${discm1}))
+    echo -n ,$totread,$trim,
+
+    aftertrim=`bc -l <<<"${trim}/${totread}"|cut -c1-6`
+    map=`bc -l <<<"${noclusterdup_reads}/${totread}"|cut -c1-6`
+    clon=`bc -l <<<"1-(${pure_reads}/${noclusterdup_reads})" |cut -c1-6`
+    cdups=`bc -l <<<"${clusterdup_reads}/${totread}"|cut -c1-6`
+    endo=`bc -l <<<"${noclusterdup_reads}/${trim}"|cut -c1-6`
+    endouniq=`bc -l <<<"${pure_reads}/${trim}"|cut -c1-6`
+    effic=`bc -l <<<"${pure_reads}/${totread}"|cut -c1-6`
+    echo -n $aftertrim,$map,$clon,$cdups,$endo,$endouniq,$effic
+
+    for depth in 0.1 0.5 0.7 1 2 4 8 12; do
+      txt=${results_fol}/complexity/${id}_DEPTH-${depth}.complexity.out
+      reads=`cut -f3 -d" " $txt`
+      complex=`cut -f4  -d" " $txt`
+      echo -n ,$reads,$complex
+    done
+  fi
+
+
 
   echo ""
 
