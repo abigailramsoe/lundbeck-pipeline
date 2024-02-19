@@ -55,7 +55,7 @@ Remember to change the `-j` parameter to the amount of threads you want to use.
 
 If you want to run on slurm:
 
-You need a `cluster_config.yml`, one is provided as an example.
+You need a `cluster_config.yml`, one is provided as an example. 
 
 Run this job on the headnode (in a screen). By default logs are created in `$(pwd)/log`, change this in the command if you want this to be different
 
@@ -63,9 +63,75 @@ Run this job on the headnode (in a screen). By default logs are created in `$(pw
 snakemake -snakefile map.smk --configfile config.yml --use-conda -j 90 --cluster-config cluster_config.yml --cluster "sbatch --export=ALL -t {cluster.time} --ntasks-per-node {cluster.ntasks_per_node} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus_per_task} --mem {cluster.memory} --partition {cluster.partition} --job-name {rulename}.{jobid} --output=$(pwd)/log/slurm-%j.out" --conda-frontend mamba --latency-wait 60  --rerun-incomplete --rerun-triggers mtime --conda-frontend mamba
 ```
 
+## Statistics 
 
+This is the pipeline for the statistics part. It can also estimate library complexity and do sequencing projections (`lib_complexity` option in config file), but only if the data was also mapped by this pipeline. 
 
-how to stats 
-complexity stats
-stats explaanaaiotn
+### Config file 
+You need a config file, there is an example in `config-stat.yml`
+
+```yaml
+ref: /maps/projects/lundbeck/data/hg38/genome.fa # Path to fasta reference genome 
+units: sslib_devel_units # Units file, more on this later
+outfol: /projects/lundbeck/scratch/sslib_devel/results/ # Folder to store the results 
+angsd_dir: /projects/lundbeck/apps/angsd/ # Path to ANGSD directory, https://github.com/ANGSD/angsd
+bam2prof_exec: /projects/lundbeck/apps/bam2prof/src/bam2prof # Path to bam2prof executable https://github.com/grenaud/bam2prof
+superduper_exec: /projects/lundbeck/apps/decluster/decluster # Path to decluster executable https://github.com/ANGSD/decluster
+lib_complexity: yes # Do you want to estimate library complexity? Only available if mapped by this pipeline 
+```
+
+### Units file 
+
+The units file is a tab seperated file with the header (sampleId, path) and columns:
+1. sampleId: unique sample ID for each bam
+2. path: full path for each file
+
+There is an example in `sslib_devel_units`, in the future there should be an automated way of getting this from the mapping pipeline 
+
+### How to run 
+
+```bash
+snakemake -s stats.smk --configfile config-stat.yml -p -j12 --rerun-incomplete 
+```
+
+Or on slurm, the same way as the mapping pieline. There is a cluster-config for the statistics part in `cluster_config-stats.jml`
+
+### Results 
+
+A csv with results will be generated in `$outfol/results.csv`, where `$outfol` is the output folder you specified in the config file. 
+
+Here is an explanation of each field:
+
+1. ID from units file
+2. Full path to bam, from units file
+3. Number of single-end mapping reads without cluster duplicates (Decluster)
+4. Number of single-end mapping cluster duplicates (Decluster)
+5. Number of single-end mapping reads without any duplicates (Decluster)
+6. Average depth of coverage for autosomes (samtools depth)
+7. Average depth of coverage of chrM (samtools depth)
+8. Average depth of coverage of chrX (samtools depth)
+9. Average depth of coverage of chrY (samtools depth)
+10. Number of sequences (Skoglund)
+11. Number of chrY + chrX sequences (Skoglund)
+12. Number of chrY sequences (Skoglund)
+13. Ry coefficient (Skoglund)
+14. Standard error for Ry (Skoglund)
+15. 95% confidence intervals (Skoglund)
+16. Sex determination (Skoglund)
+17. C->T proportion at first basepair of 5' end (bam2prof)
+18. C->T proportion at second basepair of 5' end (bam2prof)
+19. C->T proportion at first basepair of 3' end (bam2prof)
+20. C->T proportion at second basepair of 3' end (bam2prof)
+21. chrM haplogroup assignment (haplogrep v2)
+22. chrM haplogroup probability (haplogrep v2)
+23. Contamix MAP authentic value for approximate settings (contamix)
+24. Contamix lower bound for approximate settings (contamix)
+25. Contamix upper bound for approximate settings (contamix)
+26. Contamix MAP authentic value for precise settings (contamix)
+27. Contamix lower bound for precise settings (contamix)
+28. Contamix upper bound for precise settings (contamix)
+29. ANGSD chrX contamination estimate, method 1 (ANGSD)
+30. ANGSD chrX contamination estimate, method 2 (ANGSD)
+31. Number of chrX SNP sites (ANGSD)
+32. Number of sites flanking chrX SNP sites (ANGSD)
 
