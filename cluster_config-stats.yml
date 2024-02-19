@@ -1,0 +1,50 @@
+# cluster_config.yml - cluster configuration
+__default__:
+  time: 10:00:00
+  nodes: 1
+  ntasks_per_node: 1
+  cpus_per_task: 1
+  memory: 8G
+  partition: comppriority
+concat_ar:
+  time: 10:00
+  nodes: 1
+  ntasks_per_node: 1
+  cpus_per_task: 1
+  memory: 10G
+  partition: comppriority
+results:
+  time: 10:00
+  nodes: 1
+  ntasks_per_node: 1
+  cpus_per_task: 1
+  memory: 10G
+  partition: comppriority
+depth:
+  time: 10:00:00
+  nodes: 1
+  ntasks_per_node: 1
+  cpus_per_task: 4
+  memory: 40G
+  partition: comppriority
+superduper:
+  time: 12:00:00
+  nodes: 1
+  ntasks_per_node: 1
+  cpus_per_task: 4
+  memory: 100G
+  partition: comppriority
+contamix:
+  time: 12:00:00
+  nodes: 1
+  ntasks_per_node: 1
+  cpus_per_task: 1
+  memory: 10G
+  partition: comppriority
+complex:
+  time: 10:00
+  nodes: 1
+  ntasks_per_node: 1
+  cpus_per_task: 1
+  memory: 4G
+  partition: comppriority
