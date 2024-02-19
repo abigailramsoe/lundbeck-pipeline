@@ -26,7 +26,7 @@ If not working on the dandy cluster, you will need to ensure that the following 
 
 ### Config file
 
-First, make a config file.  There is an exampe in `config.yml`
+First, make a config file.  There is an exampe in `configs/config.yml`
 
 ```yaml
 ref: /maps/projects/lundbeck/data/hg38/genome.fa  # Path to fasta reference genome
