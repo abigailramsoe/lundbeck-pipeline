@@ -42,7 +42,7 @@ Here are some examples. If you are an internal users and have question about wha
 
 || A1 (P7) | A2 (P5) |
 | --- | --- | --- |
-|Double-stranded libraries and Santa Cruz Reaction|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|AGATCGGAAGAGCGTCGTGTAGGGAAAG|
+|Double-stranded libraries and Santa Cruz Reaction|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT|
 Single-stranded (ss2.0) libraries and SCR with P5short|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|GGAAGAGCGTCGTGTAGGGAAAGAGTGT|
 
 
