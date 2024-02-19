@@ -1,4 +1,6 @@
-This pipeline implements the mapping and statistics workflow of the Lundbeck Foundation GeoGenetics Centre's bioinformatics pipeline. Mapping assumes paired end sequencing, while the statistics pipeline assumes single end (or a mixture of paired and single end) reads.
+![image](https://github.com/abigailramsoe/lundbeck-pipeline/assets/28560412/f96f3a70-7c3d-4398-97fd-e136a129378e)
+
+This pipeline implements the mapping and statistics workflow of the Lundbeck Foundation GeoGenetics Center's bioinformatics pipeline. Mapping assumes paired end sequencing, while the statistics pipeline assumes single end (or a mixture of paired and single end) reads.
 
 # Installation
 
@@ -40,7 +42,7 @@ Here are some examples. If you are an internal users and have question about wha
 
 || A1 (P7) | A2 (P5) |
 | --- | --- | --- |
-|Double-stranded libraries and Santa Cruz Reaction|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|AGATCGGAAGAGCGTCGTGTAGGGAAAG5|
+|Double-stranded libraries and Santa Cruz Reaction|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|AGATCGGAAGAGCGTCGTGTAGGGAAAG|
 Single-stranded (ss2.0) libraries and SCR with P5short|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|GGAAGAGCGTCGTGTAGGGAAAGAGTGT|
 
 
