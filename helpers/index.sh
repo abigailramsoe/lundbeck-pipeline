@@ -14,7 +14,7 @@ then
   exit
 fi
 
-threads=$(bash helpers/check_threads.sh $threads)
+threads=$(bash $(dirname $0)/check_threads.sh $threads)
 
 
 idx=$bam.$idx_suffix

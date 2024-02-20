@@ -1,5 +1,6 @@
 
 import pandas as pd
+import sys
 
 ## --------------------------------------------------------------------------------
 ## global parameters from config file
@@ -26,6 +27,8 @@ if lib_complexity:
     if not os.path.isdir(ar_dir): ar_dir_error()
     ar_settings_dir = "/".join(ar_dir.split("/")[0:-1]) + "/stats/"
     print("Doing library complexity analysis")
+
+script_path = sys.path[0] + "/"
 
 
 ## --------------------------------------------------------------------------------
@@ -82,7 +85,7 @@ rule concat_ar:
     params:
         dir + "complexity/"
     shell:
-        "bash helpers/parse_AR.sh {input} {params} {units}"
+        "bash {script_path}/helpers/parse_AR.sh {input} {params} {units}"
 
 rule results:
     input:
@@ -91,7 +94,7 @@ rule results:
         dir + "results.csv",
     threads: 1
     shell:
-        "bash helpers/csv_wrapper.sh {units} {dir} {lib_complexity} > {output}"
+        "bash {script_path}/helpers/csv_wrapper.sh {units} {dir} {lib_complexity} > {output}"
 
 rule complex:
     input:
@@ -104,7 +107,7 @@ rule complex:
         dir + "complexity/{id}"
     threads: 1
     shell:
-        "bash analyses/complex.sh -t {input.totreads} -a {input.table} -u {input.dupstat} -o {params} -d {wildcards.depth}"
+        "bash {script_path}/analyses/complex.sh -t {input.totreads} -a {input.table} -u {input.dupstat} -o {params} -d {wildcards.depth}"
 
 
 rule haplo:
@@ -114,7 +117,7 @@ rule haplo:
         dir + "haplo/{id}.haplo"
     threads: 1
     shell:
-        "bash analyses/haplogrep.sh -b {input} -f {REF} -o {output}"
+        "bash {script_path}/analyses/haplogrep.sh -b {input} -f {REF} -o {output}"
 
 rule depth:
     input:
@@ -123,7 +126,7 @@ rule depth:
         dir + "depth/{id}.depth"
     threads: 4
     shell:
-        "bash analyses/depth.sh -b {input} -t {threads} -o {output}"
+        "bash {script_path}/analyses/depth.sh -b {input} -t {threads} -o {output}"
 
 
 rule sex:
@@ -133,7 +136,7 @@ rule sex:
         dir + "sex/{id}.sex"
     threads: 4
     shell:
-        "bash analyses/sex.sh -b {input} -f {REF} -o {output}"
+        "bash {script_path}/analyses/sex.sh -b {input} -f {REF} -o {output}"
 
 
 rule angsdX:
@@ -143,7 +146,7 @@ rule angsdX:
         dir + "angsdX/{id}.res"
     threads: 1
     shell:
-        "bash analyses/angsdX.sh -b {input} -e {angsd} -f {REF} -o {output}"
+        "bash {script_path}/analyses/angsdX.sh -b {input} -e {angsd} -f {REF} -o {output}"
 
 
 rule dmg:
@@ -153,7 +156,7 @@ rule dmg:
         dir + "damage/{id}.prof"
     threads: 1
     shell:
-        "bash analyses/damage.sh -b {input} -e {bam2prof} -o {output}"
+        "bash {script_path}/analyses/damage.sh -b {input} -e {bam2prof} -o {output}"
 
 
 rule contamix:
@@ -165,7 +168,7 @@ rule contamix:
         dir + "contamix/{id}_{cov}x_dif{dif}"
     threads: 1
     shell:
-        "bash analyses/contamix.sh -b {input} -f {REF} -o {params} -c {wildcards.cov} -d {wildcards.dif}"
+        "bash {script_path}/analyses/contamix.sh -b {input} -f {REF} -o {params} -c {wildcards.cov} -d {wildcards.dif}"
 
 
 rule superduper:
@@ -178,4 +181,4 @@ rule superduper:
         dir + "superduper/{id}",
     threads: 4
     shell:
-        "bash analyses/superduper.sh -b {input} -o {params} -t {threads} -e {superduper} -f {REF}"
+        "bash {script_path}/analyses/superduper.sh -b {input} -o {params} -t {threads} -e {superduper} -f {REF}"

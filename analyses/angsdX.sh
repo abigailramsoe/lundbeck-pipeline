@@ -29,18 +29,20 @@ if [[ -z $bam_file || -z $fasta_file || -z $output_base || -z $angsd_dir ]]; the
     usage
 fi
 
-# Validate files and directories
-bash helpers/check_file.sh "$bam_file"
-bash helpers/check_file.sh "$fasta_file"
-bash helpers/check_file.sh "$angsd_dir/angsd"
+dir=$(dirname $0)/../
 
-bash helpers/check_directory.sh $(dirname "$output_base")
+# Validate files and directories
+bash $dir/helpers/check_file.sh "$bam_file"
+bash $dir/helpers/check_file.sh "$fasta_file"
+bash $dir/helpers/check_file.sh "$angsd_dir/angsd"
+
+bash $dir/helpers/check_directory.sh $(dirname "$output_base")
 
 x_region=$(samtools view $bam_file -H|grep ^@SQ|grep X|head -n1|cut -f2|cut -f2 -d":")
 
 hapmap=""
-if [ $x_region != "chrX" ]; then hapmap=helpers/ChrX.hg38.hapmap.gz; fi
-if [ $x_region != "X" ]; then hapmap=helpers/ChrX.hs37d5.hapmap.gz; fi
+if [ $x_region != "chrX" ]; then hapmap=$dir/helpers/ChrX.hg38.hapmap.gz; fi
+if [ $x_region != "X" ]; then hapmap=$dir/helpers/ChrX.hs37d5.hapmap.gz; fi
 
 if [ ! -f "$hapmap" ]
 then

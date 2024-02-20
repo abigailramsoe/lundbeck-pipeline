@@ -32,12 +32,13 @@ if [[ -z $bam_file || -z $fasta_file || -z $output_base || -z $coverage || -z $d
     echo "Error: All parameters are required."
     usage
 fi
+dir=$(dirname $0)/../
 
 # Validate files and directories
-bash helpers/check_file.sh "$bam_file"
-bash helpers/check_file.sh "$fasta_file"
+bash $dir/helpers/check_file.sh "$bam_file"
+bash $dir/helpers/check_file.sh "$fasta_file"
 
-bash helpers/check_directory.sh $(dirname "$output_base")
+bash $dir/helpers/check_directory.sh $(dirname "$output_base")
 
 
 if ! [[ "$coverage" =~ ^[0-9]+$ ]] ; then
@@ -50,7 +51,7 @@ then
   exit 1
 fi
 
-region=$(bash helpers/find_mt.sh "$fasta_file")
+region=$(bash $dir/helpers/find_mt.sh "$fasta_file")
 
 if [ $(hostname|cut -c1-5) == "dandy" ]; then
   echo "Detected dandy system, loading jdk and the good R version (3.6.1)"
@@ -64,7 +65,7 @@ fi
 
 
 
-bash helpers/index.sh $bam_file
+bash $dir/helpers/index.sh $bam_file
 
 base=$output_base.mt
 samtools view -b $bam_file $region -F 1 -T $fasta_file  > ${base}.bam
@@ -80,12 +81,12 @@ bcftools mpileup -d 2000 -q 30 -Q 20 -f $fasta_file ${base}.bam | bcftools call 
 echo "########### vcf OK ###########"
 
 #get the consensus sequence with Victor's script (possible with ANGSD)
-helpers/contamix_helpers/CnsMaj3_1.pl -i ${base}.vcf -o ${base}.fa -l 16569 -cov $coverage -diff $diff -idiff 0.5 -h ${base} -callindels no > ${base}.cns
+$dir/helpers/contamix_helpers/CnsMaj3_1.pl -i ${base}.vcf -o ${base}.fa -l 16569 -cov $coverage -diff $diff -idiff 0.5 -h ${base} -callindels no > ${base}.cns
 echo "########### consensus file OK ###########"
 
 
 #add the consensus to the 311 mtDNA sequences and align all with mafft
-cat ${base}.fa helpers/contamix_helpers/311humans.fasta > ${base}_312.fasta
+cat ${base}.fa $dir/helpers/contamix_helpers/311humans.fasta > ${base}_312.fasta
 mafft ${base}_312.fasta > ${base}_312.aligned.fasta
 echo "########### alignment with 311 mtDNAs OK ###########"
 
@@ -93,7 +94,7 @@ echo "########### alignment with 311 mtDNAs OK ###########"
 bwa index -a bwtsw ${base}.fa
 samtools faidx ${base}.fa
 if [ -f ${base}.dict ]; then rm ${base}.dict; fi
-java -jar helpers/contamix_helpers/picard.jar CreateSequenceDictionary R=${base}.fa O=${base}.dict
+java -jar $dir/helpers/contamix_helpers/picard.jar CreateSequenceDictionary R=${base}.fa O=${base}.dict
 echo "########### consensus indexed OK ###########"
 
 #get fastq files from the bam
@@ -105,11 +106,11 @@ cons=${base}.fa
 bwa aln -l 1000 -t 10 $cons ${base}.fq > ${base}_ra.sai
 bwa samse -r '@RG\tID:${base}\tLB:${base}_L1\tPL:ILLUMINA\tSM:${base}' $cons ${base}_ra.sai ${base}.fq | samtools view -bh -q 30 | samtools sort -O BAM -o ${base}_ra.sort.bam
 
-java -jar helpers/contamix_helpers/picard.jar MarkDuplicates I=${base}_ra.sort.bam O=${base}_ra.sort.rmdup.bam TMP_DIR=temp METRICS_FILE=${base}.metrics.txt REMOVE_DUPLICATES=true ASSUME_SORTED=true VALIDATION_STRINGENCY=LENIENT
+java -jar $dir/helpers/contamix_helpers/picard.jar MarkDuplicates I=${base}_ra.sort.bam O=${base}_ra.sort.rmdup.bam TMP_DIR=temp METRICS_FILE=${base}.metrics.txt REMOVE_DUPLICATES=true ASSUME_SORTED=true VALIDATION_STRINGENCY=LENIENT
 samtools index ${base}_ra.sort.rmdup.bam
 rm ${base}_ra.sai
-java -jar helpers/contamix_helpers/GenomeAnalysisTK.jar -T RealignerTargetCreator -R $cons -I ${base}_ra.sort.rmdup.bam -o ${base}.intervals
-java -jar helpers/contamix_helpers/GenomeAnalysisTK.jar -T IndelRealigner -R $cons -I ${base}_ra.sort.rmdup.bam -targetIntervals ${base}.intervals -o ${base}_ra.sort.rmdup.realn.bam
+java -jar $dir/helpers/contamix_helpers/GenomeAnalysisTK.jar -T RealignerTargetCreator -R $cons -I ${base}_ra.sort.rmdup.bam -o ${base}.intervals
+java -jar $dir/helpers/contamix_helpers/GenomeAnalysisTK.jar -T IndelRealigner -R $cons -I ${base}_ra.sort.rmdup.bam -targetIntervals ${base}.intervals -o ${base}_ra.sort.rmdup.realn.bam
 samtools calmd -Erb ${base}_ra.sort.rmdup.realn.bam $cons > ${base}_ra.final.bam
 samtools index ${base}_ra.final.bam
 
@@ -124,4 +125,4 @@ fi
 echo "########### map fastq to the consensus OK ###########"
 
 #do the actual comtamMix part
-Rscript helpers/contamix_helpers/estimate.R --samFn ${base}_ra.final.bam --malnFn ${base}_312.aligned.fasta --figure ${base}_contam.pdf --trimBases 7 > ${base}.summary.txt
+Rscript $dir/helpers/contamix_helpers/estimate.R --samFn ${base}_ra.final.bam --malnFn ${base}_312.aligned.fasta --figure ${base}_contam.pdf --trimBases 7 > ${base}.summary.txt

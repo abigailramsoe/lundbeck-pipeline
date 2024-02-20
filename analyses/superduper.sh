@@ -35,16 +35,17 @@ if [[ -z $bam_file || -z $output_base || -z $superduper || -z $fasta_file ]]; th
   usage
 fi
 
+dir=$(dirname $0)/../
 # Validate files and directories
-bash helpers/check_file.sh "$bam_file"
-bash helpers/check_file.sh "$superduper"
-bash helpers/check_file.sh "$fasta_file"
-threads=$(bash helpers/check_threads.sh $threads)
+bash $dir/helpers/check_file.sh "$bam_file"
+bash $dir/helpers/check_file.sh "$superduper"
+bash $dir/helpers/check_file.sh "$fasta_file"
+threads=$(bash $dir/helpers/check_threads.sh $threads)
 
-bash helpers/check_directory.sh $(dirname "$output_base")
+bash $dir/helpers/check_directory.sh $(dirname "$output_base")
 
 if [ -z "$pixeldist" ]; then pixeldist=12000; fi
 if [ -z "$qscore" ]; then qscore=30; fi
 
 $superduper -w -b ${bam_file} -T $fasta_file -q $qscore -o $output_base -p $pixeldist -@$threads -m
-touch $output_base.table.txt 
+touch $output_base.table.txt

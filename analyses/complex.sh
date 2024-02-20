@@ -31,13 +31,14 @@ if [[ -z $totreads_file || -z $table || -z $dup || -z $output_base || -z $depth 
     echo "Error: All parameters are required."
     usage
 fi
+dir=$(dirname $0)/../
 
 # Validate files and directories
-bash helpers/check_file.sh "$totreads_file"
-bash helpers/check_file.sh "$table" # might need to make this less strict, sometimes there is no table
-bash helpers/check_file.sh "$dup"
+bash $dir/helpers/check_file.sh "$totreads_file"
+bash $dir/helpers/check_file.sh "$table" # might need to make this less strict, sometimes there is no table
+bash $dir/helpers/check_file.sh "$dup"
 
-bash helpers/check_directory.sh $(dirname $output_base)
+bash $dir/helpers/check_directory.sh $(dirname $output_base)
 
 if [[ $(bc <<< "$depth <= 0") == 1 ]]
 then

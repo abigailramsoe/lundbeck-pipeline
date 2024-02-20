@@ -28,11 +28,13 @@ if [[ -z $bam_file || -z $output_base || -z $bam2prof ]]; then
   usage
 fi
 
-# Validate files and directories
-bash helpers/check_file.sh "$bam_file"
-bash helpers/check_file.sh "$bam2prof"
+dir=$(dirname $0)/../
 
-bash helpers/check_directory.sh $(dirname "$output_base")
+# Validate files and directories
+bash $dir/helpers/check_file.sh "$bam_file"
+bash $dir/helpers/check_file.sh "$bam2prof"
+
+bash $dir/helpers/check_directory.sh $(dirname "$output_base")
 
 if  [ -z "$length" ]
 then

@@ -27,21 +27,25 @@ if [[ -z $bam_file || -z $output_base ]]; then
     usage
 fi
 
+dir=$(dirname $0)/../
+
 # Validate files and directories
-bash helpers/check_file.sh "$bam_file"
-bash helpers/check_directory.sh $(dirname "$output_base")
-threads=$(bash helpers/check_threads.sh $threads)
+bash $dir/helpers/check_file.sh "$bam_file"
+bash $dir/helpers/check_directory.sh $(dirname "$output_base")
+threads=$(bash $dir/helpers/check_threads.sh $threads)
+bash $dir/helpers/index.sh $bam_file
 
-bash helpers/index.sh $bam_file
-
-bed=$(bash helpers/make_bed.sh $bam_file)
+bed=$(bash $dir/helpers/make_bed.sh $bam_file)
 mt_region=$(samtools view $bam_file -H|grep ^@SQ|grep M|head -n1|cut -f2|cut -f2 -d":")
 x_region=$(samtools view $bam_file -H|grep ^@SQ|grep X|head -n1|cut -f2|cut -f2 -d":")
 y_region=$(samtools view $bam_file -H|grep ^@SQ|grep Y|head -n1|cut -f2|cut -f2 -d":")
 
 auto=$(samtools depth $bam_file -a -Q 30 -q 20 -b $bed -@$threads|datamash mean 3)
+
 mt=$(samtools depth $bam_file -a -Q 30 -q 20 -r $mt_region -@$threads|datamash mean 3)
+
 x=$(samtools depth $bam_file -a -Q 30 -q 20 -r $x_region -@$threads|datamash mean 3)
+
 y=$(samtools depth $bam_file -a -Q 30 -q 20 -r $y_region -@$threads|datamash mean 3)
 
 echo -e "Input\tAutosomalCov\tMTCov\tXCov\tYCov" > $output_base
