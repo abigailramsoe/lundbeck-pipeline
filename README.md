@@ -1,4 +1,6 @@
-This pipeline implements the mapping and statistics workflow of the Lundbeck Foundation GeoGenetics Centre's bioinformatics pipeline. Mapping assumes paired end sequencing, while the statistics pipeline assumes single end (or a mixture of paired and single end) reads.
+![image](https://github.com/abigailramsoe/lundbeck-pipeline/assets/28560412/f96f3a70-7c3d-4398-97fd-e136a129378e)
+
+This pipeline implements the mapping and statistics workflow of the Lundbeck Foundation GeoGenetics Center's bioinformatics pipeline. Mapping assumes paired end sequencing, while the statistics pipeline assumes single end (or a mixture of paired and single end) reads.
 
 # Installation
 
@@ -24,7 +26,7 @@ If not working on the dandy cluster, you will need to ensure that the following 
 
 ### Config file
 
-First, make a config file.  There is an exampe in `config.yml`
+First, make a config file.  There is an exampe in `configs/config.yml`
 
 ```yaml
 ref: /maps/projects/lundbeck/data/hg38/genome.fa  # Path to fasta reference genome
@@ -40,7 +42,7 @@ Here are some examples. If you are an internal users and have question about wha
 
 || A1 (P7) | A2 (P5) |
 | --- | --- | --- |
-|Double-stranded libraries and Santa Cruz Reaction|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|AGATCGGAAGAGCGTCGTGTAGGGAAAG5|
+|Double-stranded libraries and Santa Cruz Reaction|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT|
 Single-stranded (ss2.0) libraries and SCR with P5short|AGATCGGAAGAGCACACGTCTGAACTCCAGTCA|GGAAGAGCGTCGTGTAGGGAAAGAGTGT|
 
 
@@ -70,7 +72,7 @@ You need a `cluster_config.yml`, one is provided as an example.
 Run this job on the headnode (in a screen). By default logs are created in `$(pwd)/log`, change this in the command if you want this to be different
 
 ```bash
-snakemake -snakefile map.smk --configfile configs/config.yml --use-conda -j 90 --cluster-config configs/cluster_config.yml --cluster "sbatch --export=ALL -t {cluster.time} --ntasks-per-node {cluster.ntasks_per_node} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus_per_task} --mem {cluster.memory} --partition {cluster.partition} --job-name {rulename}.{jobid} --output=$(pwd)/log/slurm-%j.out" --conda-frontend mamba --latency-wait 60  --rerun-incomplete --rerun-triggers mtime --conda-frontend mamba
+snakemake -s map.smk --configfile configs/config.yml --use-conda -j 90 --cluster-config configs/cluster_config.yml --cluster "sbatch --export=ALL -t {cluster.time} --ntasks-per-node {cluster.ntasks_per_node} --nodes {cluster.nodes} --cpus-per-task {cluster.cpus_per_task} --mem {cluster.memory} --partition {cluster.partition} --job-name {rulename}.{jobid} --output=$(pwd)/log/slurm-%j.out" --conda-frontend mamba --latency-wait 60  --rerun-incomplete --rerun-triggers mtime --conda-frontend mamba
 ```
 
 ## Statistics
