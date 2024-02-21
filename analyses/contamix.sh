@@ -120,7 +120,7 @@ if [ $(samtools view ${base}_ra.final.bam -c) -lt 10 ];
 then
   echo "No MT reads in final bam file ${base}_ra.final.bam" >> ${base}.summary.txt
   echo "No MT reads in final bam file ${base}_ra.final.bam"
-  exit 1
+  exit 0
 fi
 echo "########### map fastq to the consensus OK ###########"
 
