@@ -6,7 +6,7 @@ complexity=$3
 
 # Headers
 echo -n ID,Path,
-echo -n MappingReads_NoClusterDups,MappingReads_ClusterDups,MappingReads_NoDups,Readlen,
+echo -n MappedReads,Duplicates,Read1,Read2,ProperlyPaired,Singletons,
 echo -n Depth_Autosomes,Depth_MT,Depth_X,Depth_Y,
 echo -n SKOGLUND_Nseqs,SKOGLUND_NchrY+chrX,SKOGLUND_NchrY,SKOGLUND_Ry,SKOGLUND_SE,SKOGLUND_95%CI,SKOGLUND_SEX,
 echo -n "C->T_5'bp1","C->T_5'bp2",
@@ -18,6 +18,7 @@ echo -n ANGSD-XContamination_Method1,ANGSD-XContamination_Method2,ANGSD-XContami
 
 if [ "$complexity" != "False" ]; then
   echo -n ,Reads_Total,
+  echo -n MappingReads_NoClusterDups,MappingReads_ClusterDups,MappingReads_NoDups,Readlen,
   echo -n Reads_AfterTrim,
   echo -n AfterTrim,
   echo -n Mapping,
@@ -41,14 +42,14 @@ do
   if [ $id == "sampleId" ]; then continue; fi
   echo -n $id,$path,
 
-  dupstat=$results_fol/superduper/$id.dupstat.txt
-  pure_reads=$(grep PRC ${dupstat}| cut -f2)
-  rpf=$(cat $dupstat|grep RPF|cut -f2)
-  cld=$(cat $dupstat|grep CLD|cut -f2)
-  noclusterdup_reads=$(($rpf-$cld))
-  len=$(cat $dupstat|grep CMA|cut -f2)
-  clusterdup_reads=$(cat $dupstat|grep CLD|cut -f2)
-  echo -n $noclusterdup_reads,$clusterdup_reads,$pure_reads,$len,
+  flagstat=$results_fol/flagstat/$id.txt
+  mapped=$(cat $flagstat|grep mapped|head -n1|cut -f1 -d" ")
+  dups=$(cat $flagstat|grep dup|head -n1|cut -f1 -d" ")
+  read1=$(cat $flagstat|grep read1|cut -f1 -d" ")
+  read2=$(cat $flagstat|grep read2|cut -f1 -d" ")
+  proper=$(cat $flagstat|grep proper|cut -f1 -d" ")
+  single=$(cat $flagstat|grep single|cut -f1 -d" ")
+  echo -n $mapped,$dups,$read1,$read2,$proper,$single,
 
   depth=$results_fol/depth/$id.depth
   auto=$(cat $depth|tail -n1|cut -f2)
@@ -64,7 +65,7 @@ do
   skoglund_Ry=$(tail -n1 $skoglund_file|awk '{ print($4) }')
   skoglund_SE=$(tail -n1 $skoglund_file|awk '{ print($5) }')
   skoglund_95CI=$(tail -n1 $skoglund_file|awk '{ print($6) }')
-  skoglund_Assignment=$(tail -n1 $skoglund_file|awk '{ print($7) }')
+  skoglund_Assignment=$(tail -n1 $skoglund_file|cut -f7-|cut -c2-)
   echo -n $skoglund_Nseqs,$skoglund_NchrYpluschrX,$skoglund_NchrY,$skoglund_Ry,$skoglund_SE,$skoglund_95CI,$skoglund_Assignment,
 
   prof=$results_fol/damage/$id.prof
@@ -105,6 +106,24 @@ do
     discm1=`cat $results_fol/complexity/discm1.txt|awk -v i=$id '{ if ($1==i) print($2) }'`
     trim=$((${totread}-${discm1}))
     echo -n ,$totread,$trim,
+
+    dupstat=$results_fol/superduper/$id.dupstat.txt
+    pure_reads=$(grep PRC ${dupstat}| cut -f2)
+    if [ -z "$pure_reads" ]
+    then
+      pure_reads=0
+      rpf=0
+      cld=0
+      len=0
+      clusterdup_reads=0
+    else
+      rpf=$(cat $dupstat|grep RPF|cut -f2)
+      cld=$(cat $dupstat|grep CLD|cut -f2)
+      len=$(cat $dupstat|grep CMA|cut -f2)
+      clusterdup_reads=$(cat $dupstat|grep CLD|cut -f2)
+    fi
+    noclusterdup_reads=$(($rpf-$cld))
+    echo -n $noclusterdup_reads,$clusterdup_reads,$pure_reads,$len,
 
     aftertrim=`bc -l <<<"${trim}/${totread}"|cut -c1-6`
     map=`bc -l <<<"${noclusterdup_reads}/${totread}"|cut -c1-6`

@@ -10,7 +10,6 @@ units = config["units"]
 dir = config["outfol"]
 angsd = config["angsd_dir"]
 bam2prof = config["bam2prof_exec"]
-superduper = config["superduper_exec"]
 lib_complexity = config["lib_complexity"]
 
 ## --------------------------------------------------------------------------------
@@ -27,6 +26,7 @@ if lib_complexity:
     if not os.path.isdir(ar_dir): ar_dir_error()
     ar_settings_dir = "/".join(ar_dir.split("/")[0:-1]) + "/stats/"
     print("Doing library complexity analysis")
+    superduper = config["superduper_exec"]
 
 script_path = sys.path[0] + "/"
 
@@ -47,7 +47,7 @@ def ar_dir_error():
 ## --------------------------------------------------------------------------------
 ## targets
 
-simple_res = expand(dir + "superduper/{id}.dupstat.txt", id = unit_df.index) + \
+simple_res = expand(dir + "flagstat/{id}.txt", id = unit_df.index) + \
             expand(dir + "haplo/{id}.haplo", id = unit_df.index) + \
             expand(dir + "depth/{id}.depth", id = unit_df.index) + \
             expand(dir + "sex/{id}.sex", id = unit_df.index) + \
@@ -55,7 +55,9 @@ simple_res = expand(dir + "superduper/{id}.dupstat.txt", id = unit_df.index) + \
             expand(dir + "damage/{id}.prof", id = unit_df.index) + \
             expand(expand(dir + "contamix/{{id}}_{cov}x_dif{dif}.mt.summary.txt", zip, cov = [1, 5], dif = [0.5, 0.7]), zip, id = unit_df.index)
 
-complexity_res = [dir + "complexity/ar.full.txt"] + expand(expand(dir + "complexity/{{id}}_DEPTH-{depth}.complexity.out", depth = [0.1,0.5,0.7,1,2,4,8,12]), zip, id = unit_df.index)
+complexity_res = [dir + "complexity/ar.full.txt"] + \
+                expand(expand(dir + "complexity/{{id}}_DEPTH-{depth}.complexity.out", depth = [0.1,0.5,0.7,1,2,4,8,12]), zip, id = unit_df.index) + \
+                expand(dir + "superduper/{id}.dupstat.txt", id = unit_df.index)
 
 all_res = simple_res
 if lib_complexity:
@@ -74,6 +76,15 @@ onerror:
 
 ## --------------------------------------------------------------------------------
 ## rules
+
+rule flagstat:
+    input:
+        get_bam
+    output:
+        dir + "flagstat/{id}.txt"
+    shell:
+        "samtools flagstat {input} > {output}"
+
 
 rule concat_ar:
     input:

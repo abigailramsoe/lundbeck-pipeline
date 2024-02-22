@@ -16,8 +16,8 @@ If not working on the dandy cluster, you will need to ensure that the following 
 * Java >1.8
 * R 3.6.1
 * [ANGSD](https://github.com/ANGSD/angsd)
-* [Decluster/Superduper](https://github.com/ANGSD/decluster)
 * [bam2prof](https://github.com/grenaud/bam2prof)
+* [Decluster/Superduper](https://github.com/ANGSD/decluster) (only if you want library complexity projections)
 
 
 # Usage
@@ -117,65 +117,71 @@ Here is an explanation of each field:
 ```
 1. ID from units file
 2. Full path to bam, from units file
-3. Number of single-end mapping reads without cluster duplicates (Decluster)
-4. Number of single-end mapping cluster duplicates (Decluster)
-5. Number of single-end mapping reads without any duplicates (Decluster)
-6. Average read length of single-end reads (Decluster)
-7. Average depth of coverage for autosomes (samtools depth)
-8. Average depth of coverage of chrM (samtools depth)
-9. Average depth of coverage of chrX (samtools depth)
-10. Average depth of coverage of chrY (samtools depth)
-11. Number of sequences (Skoglund)
-12. Number of chrY + chrX sequences (Skoglund)
-13. Number of chrY sequences (Skoglund)
-14. Ry coefficient (Skoglund)
-15. Standard error for Ry (Skoglund)
-16. 95% confidence intervals (Skoglund)
-17. Sex determination (Skoglund)
-18. C->T proportion at first basepair of 5' end (bam2prof)
-19. C->T proportion at second basepair of 5' end (bam2prof)
-20. C->T proportion at first basepair of 3' end (bam2prof)
-21. C->T proportion at second basepair of 3' end (bam2prof)
-22. chrM haplogroup assignment (haplogrep v2)
-23. chrM haplogroup probability (haplogrep v2)
-24. Contamix MAP authentic value for approximate settings (contamix)
-25. Contamix lower bound for approximate settings (contamix)
-26. Contamix upper bound for approximate settings (contamix)
-27. Contamix MAP authentic value for precise settings (contamix)
-28. Contamix lower bound for precise settings (contamix)
-29. Contamix upper bound for precise settings (contamix)
-30. ANGSD chrX contamination estimate, method 1 (ANGSD)
-31. ANGSD chrX contamination estimate, method 2 (ANGSD)
-32. Number of chrX SNP sites (ANGSD)
-33. Number of sites flanking chrX SNP sites (ANGSD)
+3. Number of mapped reads (samtools flagstat)
+4. Number of duplicates (samtools flagstat)
+5. Number of mapped read 1 reads (samtools flagstat)
+6. Number of mapped read 2 reads (samtools flagstat)
+7. Number of properly paired reads (samtools flagstat)
+8. Number of singletons (samtools flagstat)
+9. Average depth of coverage for autosomes (samtools depth)
+10. Average depth of coverage of chrM (samtools depth)
+11. Average depth of coverage of chrX (samtools depth)
+12. Average depth of coverage of chrY (samtools depth)
+13. Number of sequences (Skoglund)
+14. Number of chrY + chrX sequences (Skoglund)
+15. Number of chrY sequences (Skoglund)
+16. Ry coefficient (Skoglund)
+17. Standard error for Ry (Skoglund)
+18. 95% confidence intervals (Skoglund)
+19. Sex determination (Skoglund)
+20. C->T proportion at first basepair of 5' end (bam2prof)
+21. C->T proportion at second basepair of 5' end (bam2prof)
+22. C->T proportion at first basepair of 3' end (bam2prof)
+23. C->T proportion at second basepair of 3' end (bam2prof)
+24. chrM haplogroup assignment (haplogrep v2)
+25. chrM haplogroup probability (haplogrep v2)
+26. Contamix MAP authentic value for approximate settings (contamix)
+27. Contamix lower bound for approximate settings (contamix)
+28. Contamix upper bound for approximate settings (contamix)
+29. Contamix MAP authentic value for precise settings (contamix)
+30. Contamix lower bound for precise settings (contamix)
+31. Contamix upper bound for precise settings (contamix)
+32. ANGSD chrX contamination estimate, method 1 (ANGSD)
+33. ANGSD chrX contamination estimate, method 2 (ANGSD)
+34. Number of chrX SNP sites (ANGSD)
+35. Number of sites flanking chrX SNP sites (ANGSD)
 ```
 
 If library projections are included:
 
 ```
-34. Total number of reads sequenced (AdapterRemoval)
-35. Total number of reads (Reads_Total) minus number of discarded mate 1 reads (AdapterRemoval)
-36. Proportion of remaining reads after trimming (Reads_AfterTrim/Reads_Total)
-37. Proportion of mapping reads (MappingReads_NoClusterDups/Reads_Total)
-38. Clonality (1-(MappingReads_NoDups/MappingReads_NoClusterDups)
-39. Cluster duplicates (MappingReads_ClusterDups/Reads_Total)
-40. Endogenous (MappingReads_NoClusterDups/Reads_AfterTrim)
-41. Endogenous with no duplicates (MappingReads_NoDups/Reads_AfterTrim)
-42. Efficiency (MappingReads_NoDups/Reads_Total)
-43. ReadsToReach_01x (Inf if unreachable or if clonality will be over 75%)
-44. ClonalityAt_01x
-45. ReadsToReach_05x
-46. ClonalityAt_05x
-47. ReadsToReach_07x
-48. ClonalityAt_07x
-49. ReadsToReach_1x
-50. ClonalityAt_1x
-51. ReadsToReach_2x
-52. ClonalityAt_2x
-53. ReadsToReach_4x
-54. ClonalityAt_4x
-55. ReadsToReach_8x
-56. ClonalityAt_8x
-57. ReadsToReach_12x
-58. ClonalityAt_12x
+36. Total number of reads sequenced (AdapterRemoval)
+37. Total number of reads (Reads_Total) minus number of discarded mate 1 reads (AdapterRemoval)
+38. Number of single-end mapping reads without cluster duplicates (Decluster)
+39. Number of single-end mapping cluster duplicates (Decluster)
+40. Number of single-end mapping reads without any duplicates (Decluster)
+41. Average read length of single-end reads (Decluster)
+42. Proportion of remaining reads after trimming (Reads_AfterTrim/Reads_Total)
+43. Proportion of mapping reads (MappingReads_NoClusterDups/Reads_Total)
+44. Clonality (1-(MappingReads_NoDups/MappingReads_NoClusterDups)
+45. Cluster duplicates (MappingReads_ClusterDups/Reads_Total)
+46. Endogenous (MappingReads_NoClusterDups/Reads_AfterTrim)
+47. Endogenous with no duplicates (MappingReads_NoDups/Reads_AfterTrim)
+48. Efficiency (MappingReads_NoDups/Reads_Total)
+49. ReadsToReach_01x (Inf if unreachable or if clonality will be over 75%)
+50. ClonalityAt_01x
+51. ReadsToReach_05x
+52. ClonalityAt_05x
+53. ReadsToReach_07x
+54. ClonalityAt_07x
+55. ReadsToReach_1x
+56. ClonalityAt_1x
+57. ReadsToReach_2x
+58. ClonalityAt_2x
+59. ReadsToReach_4x
+60. ClonalityAt_4x
+61. ReadsToReach_8x
+62. ClonalityAt_8x
+63. ReadsToReach_12x
+64. ClonalityAt_12x
 ```
