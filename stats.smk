@@ -13,6 +13,18 @@ bam2prof = config["bam2prof_exec"]
 lib_complexity = config["lib_complexity"]
 
 ## --------------------------------------------------------------------------------
+## functions
+
+def get_bam(wildcards):
+    return unit_df.loc[(wildcards.id), "path"]
+
+def ar_dir_error():
+    print("Could not find AdapterRemoval settings directory automatically from units")
+    print("Give up on getting library projections (library_complexity: no)")
+    exit(1)
+
+
+## --------------------------------------------------------------------------------
 ## helpers
 
 unit_df = pd.read_table(config["units"]).set_index(["sampleId"])
@@ -31,16 +43,6 @@ if lib_complexity:
 script_path = sys.path[0] + "/"
 
 
-## --------------------------------------------------------------------------------
-## functions
-
-def get_bam(wildcards):
-    return unit_df.loc[(wildcards.id), "path"]
-
-def ar_dir_error():
-    print("Could not find AdapterRemoval settings directory automatically from units")
-    print("Give up on getting library projections (library_complexity: no)")
-    exit(1)
 
 
 
