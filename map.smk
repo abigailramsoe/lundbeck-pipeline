@@ -10,7 +10,7 @@ a1 = config["a1"]
 a2 = config["a2"]
 units = config["units"]
 out = config["outfol"]
-
+picard = config["picard_jar"]
 
 ## --------------------------------------------------------------------------------
 ## helper functions
@@ -158,7 +158,7 @@ rule md:
         tmpdir = out + "bams/"
     threads: 6
     shell:
-         "mkdir -p $(dirname {params.metrics}); java -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads={threads} -Xmx2g -jar /maps/projects/lundbeck/apps/picard/build/libs/picard.jar MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=12000 I={input} o={output} REMOVE_DUPLICATES=false METRICS_FILE={params.metrics} TAGGING_POLICY=All VALIDATION_STRINGENCY=LENIENT"
+         "mkdir -p $(dirname {params.metrics}); java -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads={threads} -Xmx2g -jar {picard} MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=12000 I={input} o={output} REMOVE_DUPLICATES=false METRICS_FILE={params.metrics} TAGGING_POLICY=All VALIDATION_STRINGENCY=LENIENT"
 
 rule idx:
     input:

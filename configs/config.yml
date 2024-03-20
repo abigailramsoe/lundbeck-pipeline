@@ -4,3 +4,4 @@ a1: "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
 a2: "GGAAGAGCGTCGTGTAGGGAAAGAGTGT"
 units: units/units.tsv
 outfol: /maps/projects/lundbeck/scratch/sslib_devel/mapped/
+picard_jar: /maps/projects/lundbeck/apps/picard/build/libs/picard.jar
