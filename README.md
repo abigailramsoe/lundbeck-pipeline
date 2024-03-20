@@ -35,6 +35,7 @@ a1: "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC" # Adapter 1 sequence to remove
 a2: "GGAAGAGCGTCGTGTAGGGAAAGAGTGT" # Adapter 2 sequence to remove
 units: units/units.tsv # Units file, more on this later
 outfol: /maps/projects/lundbeck/scratch/sslib_devel/mapped/ # Folder to write mapped files to
+picard_jar: /maps/projects/lundbeck/apps/picard/build/libs/picard.jar # Path to Picard jar file 
  ```
 
 Remember to change a1 and a2 to suit your needs.
