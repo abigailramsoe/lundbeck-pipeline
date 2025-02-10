@@ -74,7 +74,7 @@ if [ $(samtools view ${base}.bam -c) == 0 ];
 then
   echo "No MT reads in $bam_file" > ${base}.summary.txt
   echo "No MT reads in $bam_file"
-  exit 1
+  exit 0
 fi
 
 bcftools mpileup -d 2000 -q 30 -Q 20 -f $fasta_file ${base}.bam | bcftools call -m --ploidy 1 > ${base}.vcf

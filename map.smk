@@ -36,11 +36,11 @@ def get_fastq(wildcards):
 ## output lists
 
 unit_df = pd.read_table(config["units"], comment="#")
+print(unit_df)
+
 unit_df["idlane"] = ["_".join(os.path.basename(x).split("_")[0:-2]) for x in unit_df["R1"]]
 unit_df["id"] = ["_".join(os.path.basename(x).split("_")[0:-4]) for x in unit_df["R1"]]
 unit_df = unit_df.set_index("idlane")
-
-
 TRIM_TYPE = ["collapsed.gz", "pair1.truncated.gz", "pair2.truncated.gz"]
 
 

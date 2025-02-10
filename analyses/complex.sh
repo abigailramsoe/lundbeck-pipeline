@@ -61,5 +61,5 @@ out=$output_base"_DEPTH-${depth}.complexity.out"
 if [ ! -s $table ]; then
  echo -e "$totreads $ncd NaN NaN" > $out
 else
- Rscript analyses/complex.R $table $depth $read_len $totreads $ncd > $out
+ Rscript $dir/analyses/complex.R $table $depth $read_len $totreads $ncd > $out
 fi

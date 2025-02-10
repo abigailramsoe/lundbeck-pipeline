@@ -1,5 +1,5 @@
 sampleId	path
-control	/maps/projects/lundbeck/scratch/sslib_devel/mapped/bams/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-A2-control.md.bam
-control-rSAP	/maps/projects/lundbeck/scratch/sslib_devel/mapped/bams/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-B4-control-rSAP.md.bam
-cutsmart	/maps/projects/lundbeck/scratch/sslib_devel/mapped/bams/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-C7-cutsmart.md.bam
-cutsmart-rSAP	/maps/projects/lundbeck/scratch/sslib_devel/mapped/bams/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP.md.bam
+d_control	/maps/projects/lundbeck/scratch/sslib_devel/downsample/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-A2-control.md.SE.down.bam
+d_control-rSAP	/maps/projects/lundbeck/scratch/sslib_devel/downsample/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-B4-control-rSAP.md.SE.down.bam
+d_cutsmart	/maps/projects/lundbeck/scratch/sslib_devel/downsample/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-C7-cutsmart.md.SE.down.bam
+d_cutsmart-rSAP	/maps/projects/lundbeck/scratch/sslib_devel/downsample/106503P-iadk-LV2002541205-P5s-srmQ-E-300bp-D10-cutsmart-rSAP.md.SE.down.bam

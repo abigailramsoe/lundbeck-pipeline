@@ -18,8 +18,8 @@ echo -n ANGSD-XContamination_Method1,ANGSD-XContamination_Method2,ANGSD-XContami
 
 if [ "$complexity" != "False" ]; then
   echo -n ,Reads_Total,
-  echo -n MappingReads_NoClusterDups,MappingReads_ClusterDups,MappingReads_NoDups,Readlen,
   echo -n Reads_AfterTrim,
+  echo -n MappingReads_NoClusterDups,MappingReads_ClusterDups,MappingReads_NoDups,Readlen,
   echo -n AfterTrim,
   echo -n Mapping,
   echo -n Clonality,

@@ -41,8 +41,8 @@ bash $dir/helpers/check_directory.sh $(dirname "$output_base")
 x_region=$(samtools view $bam_file -H|grep ^@SQ|grep X|head -n1|cut -f2|cut -f2 -d":")
 
 hapmap=""
-if [ $x_region != "chrX" ]; then hapmap=$dir/helpers/ChrX.hg38.hapmap.gz; fi
-if [ $x_region != "X" ]; then hapmap=$dir/helpers/ChrX.hs37d5.hapmap.gz; fi
+if [ $x_region == "chrX" ]; then hapmap=$dir/helpers/ChrX.hg38.hapmap.gz; fi
+if [ $x_region == "X" ]; then hapmap=$dir/helpers/ChrX.hs37d5.hapmap.gz; fi
 
 if [ ! -f "$hapmap" ]
 then
@@ -52,3 +52,9 @@ fi
 
 ${angsd_dir}/angsd -i ${bam_file} -r $x_region:5000000-154900000 -doCounts 1  -iCounts 1 -minMapQ 30 -minQ 20 -out ${output_base}
 ${angsd_dir}/misc/contamination -a ${output_base}.icnts.gz -h $hapmap &> ${output_base}
+
+
+
+
+
+
