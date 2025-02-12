@@ -50,11 +50,12 @@ Single-stranded (ss2.0) libraries and SCR with P5short|AGATCGGAAGAGCACACGTCTGAAC
 
 ### Units file
 
-You need a units file that tells snakemake where your fastqs are. This is a tab seperated file with a header (R1, R2, sm, lb) and columns:
+You need a units file that tells snakemake where your fastqs are. This is a tab seperated file with a header (R1, R2, sm, lb, id) and columns:
 1. R1: full path to R1 fastq
 2. R2: full path to R2 fastq
 3. sm: SM tag for read groups
 4. lb: LB tag for read groups
+5. id: ID tag for read groups 
 
 If you are an internal user and your data follows the Lundbeck nomenclature, you can use the script `helpers/make_mapping_units.sh $fastq_folder > units/units.tsv`, where `$fastq_folder` is the full path to a folder of fastqs you want to map. This sets the SM tag to the first 6 characters of the first field (hyphen seperated) and the LB tag to the third field.
 
